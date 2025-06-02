@@ -1,0 +1,3 @@
+[33mdada6ff[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m  Fix: Resolved customer selection issue and implemented enterprise-ready architecture - Fixed customer loading and selection functionality - Moved interactive logic to dedicated islands for proper client-side execution - Implemented robust event handling with fallback mechanisms - Created MainApp island for centralized state management - System now fully functional with enterprise-level polish!
+[33m3602718[m feat: Update to Smart Choice Engine branding and remove Voyado references
+[33m2302fe8[m Initial commit: Smart Choice AI-Powered Recommendation Engine with Fresh+Deno+TypeScript, ML algorithms, dark UI, and responsive design
