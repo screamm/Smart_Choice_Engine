@@ -39,8 +39,8 @@ export default function Home({ data }: PageProps<Data>) {
     <div class="min-h-screen bg-zinc-950 text-zinc-100">
       <div class="container mx-auto px-6 py-8">
         <header class="mb-8">
-          <h1 class="text-3xl font-bold text-emerald-400 mb-2">Smart Choice</h1>
-          <p class="text-zinc-400">AI-Powered Recommendation Engine</p>
+          <h1 class="text-3xl font-bold text-emerald-400 mb-2">Smart Choice Engine</h1>
+          <p class="text-zinc-400">AI-Powered Recommendation System</p>
         </header>
 
         <div class="grid md:grid-cols-2 gap-8">

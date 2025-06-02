@@ -1,41 +1,34 @@
-# 🚀 Snabbstart - Smart Choice
+# 🚀 Snabbstart - Smart Choice Engine
 
-**NYHET!** Helt ny ultramodern design med mörkt tema och professionella animationer! 🎨
+## Steg-för-steg instruktioner
 
-## Steg 1: Starta Backend
-Öppna **PowerShell som administratör** och kör:
+### 1. Installera Deno
+Ladda ner från: https://deno.land/
 
-```powershell
-cd "C:\Users\david\Documents\FSU23D\Egna Projekt\Smart Product Recommendation Engine\backend"
-deno run --allow-net --allow-read main.ts
-```
-
-Du ska se:
-```
-🚀 Voyado Recommendation Engine API startar på 0.0.0.0:8000
-📊 ML Engine initierad med 3 kunder
-🧠 Multi-algoritm rekommendationssystem redo
-```
-
-## Steg 2: Starta Frontend
-Öppna **en ny PowerShell-terminal** och kör:
-
-```powershell
-cd "C:\Users\david\Documents\FSU23D\Egna Projekt\Smart Product Recommendation Engine\frontend\fresh-frontend"
+### 2. Starta Backend API (Terminal 1)
+```bash
+cd backend
 deno task start
 ```
 
-Du ska se:
-```
-🍋 Fresh ready
-    Local: http://localhost:8090/
+**API körs på:** `http://localhost:8000`
+
+### 3. Starta Frontend (Terminal 2)  
+```bash
+cd frontend/fresh-frontend
+deno task start
 ```
 
-## Steg 3: Testa Applikationen
-1. Öppna webbläsaren på: **http://localhost:8090**
-2. Upplev den nya ultramoderna designen! ✨
-3. Välj en kund från dropdown-menyn
-4. Se rekommendationerna uppdateras med smooth animationer!
+**Frontend körs på:** `http://localhost:8090`
+
+### 4. Öppna Applikationen
+Gå till: **http://localhost:8090**
+
+---
+
+🚀 Smart Choice Engine API startar på 0.0.0.0:8000
+📱 Fresh frontend på http://localhost:8090
+🎯 Välj kund → Se AI-rekommendationer!
 
 ## 🎨 Nya Design-Features
 - **Mörkt tema**: Zinc-950 bakgrund med emerald-400 accenter

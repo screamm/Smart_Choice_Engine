@@ -1,179 +1,201 @@
-# 🎯 Smart Choice - Product Recommendation Engine
+# 🚀 Smart Choice Engine
 
-En AI-driven produktrekommendationsmotor byggd med **Fresh + Deno** som demonstrerar förståelse för Voyados kärnverksamhet inom e-handel, personalisering och kundengagemang.
+**AI-Powered Product Recommendation System**
 
-## 🚀 Teknisk Stack
+A modern, intelligent recommendation engine built with **Fresh + Deno + TypeScript** that delivers personalized product suggestions using advanced machine learning algorithms.
 
-- **Frontend**: Fresh (Deno) med TypeScript och TailwindCSS
-- **Backend**: Deno med Oak framework
-- **ML/AI**: Machine learning-algoritmer för rekommendationer
-- **Styling**: Modern glassmorphism design med gradients
+![Smart Choice Engine](https://img.shields.io/badge/Smart%20Choice-Engine-emerald?style=for-the-badge)
+![Fresh](https://img.shields.io/badge/Fresh-1.7.3-00D2FF?style=flat-square&logo=deno)
+![Deno](https://img.shields.io/badge/Deno-2.0-000000?style=flat-square&logo=deno)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript)
 
-## 📁 Projektstruktur
+## 🎯 Features
 
+### 🤖 **Intelligent Recommendations**
+- **Collaborative Filtering** - Analyzes user behavior patterns
+- **Content-Based Filtering** - Matches products to customer preferences  
+- **Behavioral Analysis** - Real-time scoring based on user interactions
+- **Dynamic Personalization** - Adapts recommendations per customer segment
+
+### 🎨 **Modern UI/UX**
+- **Dark Professional Theme** - Enterprise-grade design with emerald accents
+- **Responsive Layout** - Works seamlessly on all devices
+- **Real-time Updates** - Instant recommendation refresh on customer selection
+- **Confidence Scoring** - Visual indicators for recommendation accuracy
+
+### ⚡ **Performance & Tech Stack**
+- **Frontend**: Fresh 1.7.3 + Preact + TailwindCSS
+- **Backend**: Deno + Oak + TypeScript
+- **Hot Reload** - Instant development feedback
+- **Zero Runtime Dependencies** - Pure Deno stack
+
+## 🚀 Quick Start
+
+### Prerequisites
+- **Deno 2.0+** installed ([Get Deno](https://deno.land/manual/getting_started/installation))
+
+### 1. Clone Repository
+```bash
+git clone https://github.com/screamm/Smart_Choice_Engine.git
+cd Smart_Choice_Engine
 ```
-Smart Product Recommendation Engine/
-├── backend/
-│   └── main.ts                 # Deno API server med ML-algoritmer
-├── frontend/
-│   └── fresh-frontend/         # Fresh applikation
-│       ├── components/         # Återanvändbara komponenter
-│       ├── data/              # Mock data och ML-logik
-│       ├── routes/            # Fresh routes (SSR)
-│       ├── static/            # Statiska filer
-│       ├── types.ts           # TypeScript interfaces
-│       └── fresh.config.ts    # Fresh konfiguration
-├── description.md             # Detaljerad projektbeskrivning
-└── README.md                  # Denna fil
-```
 
-## 🎯 Kärnfunktioner
-
-### ✅ Implementerat
-- **Kundprofilering**: Detaljerad analys av kundbeteende och preferenser
-- **ML-Rekommendationsmotor**: 
-  - Collaborative Filtering
-  - Content-Based Filtering
-  - Hybrid approach med konfidenspoäng
-- **Real-time Dashboard**: Interaktiv kundväljare med omedelbar uppdatering
-- **Beteendeanalys**: Köphistorik, segment och poängberäkning
-- **Modern UI**: Glassmorphism design med responsiv layout
-
-### 🔄 API Endpoints (Backend)
-- `GET /api/customers` - Hämta alla kunder
-- `GET /api/recommendations/:customerId` - Personliga rekommendationer
-- `GET /api/analytics` - Systemstatistik
-- `GET /health` - Hälsokontroll
-
-## 🛠️ Installation & Start
-
-### Förutsättningar
-- **Deno** installerat (https://deno.land/)
-
-### 1. Starta Backend (Port 8000)
-```powershell
-# Öppna en extern terminal och navigera till projektet
-cd "C:\Users\david\Documents\FSU23D\Egna Projekt\Smart Product Recommendation Engine"
-
-# Starta backend
+### 2. Start Backend API
+```bash
 cd backend
-deno run --allow-net --allow-read main.ts
-```
-
-### 2. Starta Frontend (Port 8090)
-```powershell
-# Öppna en ny extern terminal
-cd "C:\Users\david\Documents\FSU23D\Egna Projekt\Smart Product Recommendation Engine"
-
-# Starta Fresh frontend
-cd frontend/fresh-frontend
 deno task start
 ```
+**Backend runs on**: `http://localhost:8000`
 
-### 3. Öppna Applikationen
-- **Frontend**: http://localhost:8090
-- **Backend API**: http://localhost:8000/health
+### 3. Start Frontend (New Terminal)
+```bash
+cd frontend/fresh-frontend  
+deno task start
+```
+**Frontend runs on**: `http://localhost:8090`
 
-## 🧪 Testning
+### 4. Open Application
+Visit: **http://localhost:8090**
 
-### Manuell testning
-1. Öppna http://localhost:8090
-2. Välj en kund från dropdown-menyn
-3. Se personliga rekommendationer genereras
-4. Kontrollera beteendeanalys och konfidenspoäng
+## 🎮 Usage
 
-### API Testning
-```powershell
-# Testa backend endpoints
-curl http://localhost:8000/health
-curl http://localhost:8000/api/customers
-curl http://localhost:8000/api/recommendations/1
+1. **Select Customer** - Choose from dropdown (Emma, Johan, Lisa)
+2. **View Recommendations** - See personalized AI-generated products
+3. **Analyze Confidence** - Check recommendation accuracy scores
+4. **Explore Algorithms** - See which ML models contributed
+
+## 🏗️ Architecture
+
+```
+Smart Choice Engine/
+├── 🔥 frontend/fresh-frontend/     # Fresh + Preact frontend
+│   ├── routes/                     # Pages & API routes
+│   ├── islands/                    # Interactive components
+│   ├── data/                       # Mock data & ML algorithms
+│   └── static/                     # Assets & styles
+│
+├── ⚡ backend/                     # Deno + Oak API server  
+│   ├── main.ts                     # Server & recommendation logic
+│   └── deno.json                   # Configuration
+│
+└── 📝 Documentation/
+    ├── README.md                   # This file
+    └── START_GUIDE.md              # Quick setup guide
 ```
 
-## 👥 Testdata
+## 🧠 Machine Learning Algorithms
 
-### Kunder
-1. **Emma Andersson** (Mode-entusiast, Stockholm)
-2. **Johan Karlsson** (Teknikintresserad, Göteborg)  
-3. **Lisa Nilsson** (Skönhetsexpert, Malmö)
+### **Collaborative Filtering**
+```typescript
+// Analyzes customer behavior patterns
+const collaborativeScore = calculateSimilarCustomers(customerId)
+  .map(similar => similar.preferences)
+  .reduce((score, prefs) => score + prefs.weight, 0);
+```
 
-### Produkter
-- Premium Jeansjacka (Fashion)
-- Trådlöst Gaming Headset (Elektronik)
-- Anti-Age Serum (Skönhet)
-- Läder Axelremsväska (Accessories)
-- 4K Gaming Skärm (Elektronik)
-- Vitamin C Ansiktsmask (Skönhet)
+### **Content-Based Filtering**  
+```typescript
+// Matches products to customer preferences
+const contentScore = customer.favoriteCategories
+  .filter(cat => product.categories.includes(cat))
+  .length / customer.favoriteCategories.length;
+```
 
-## 🤖 ML-Algoritmer
+### **Behavioral Analysis**
+```typescript
+// Real-time behavior scoring
+const behaviorScore = (customer.behaviorScore * 0.7) + 
+                     (customer.purchaseFrequency * 0.3);
+```
 
-### Collaborative Filtering
-- Hittar liknande användare baserat på köpbeteende
-- Rekommenderar produkter som liknande kunder köpt
+## 🎨 UI Components
 
-### Content-Based Filtering  
-- Analyserar produktattribut och kategorier
-- Matchar mot kundens favoritkategorier
+### **Customer Dashboard**
+- Real-time metrics (purchases, avg order value, behavior score)
+- Interactive category tags
+- Location & activity tracking
 
-### Hybrid Approach
-- Kombinerar båda metoderna
-- Viktad poängberäkning med konfidensintervall
-- Slumpmässig variation för diversifiering
+### **Recommendation Cards**  
+- Product imagery with confidence badges
+- Price & detailed reasoning
+- Algorithm attribution tags
+- Hover effects & animations
 
-## 🎨 Design
+### **System Status**
+- Live customer count
+- Active session indicator  
+- Performance metrics
 
-- **Färgschema**: Blå till lila gradient bakgrund
-- **UI-stil**: Glassmorphism med backdrop-blur effekter
-- **Responsiv**: Mobile-first approach
-- **Animationer**: Smooth övergångar och hover-effekter
+## 🔧 Development
 
-## 🔧 Konfiguration
+### **Available Commands**
+```bash
+# Frontend
+deno task start      # Start dev server
+deno task build      # Build for production
+deno task check      # Type checking
 
-### Portar
-- **Frontend**: 8090 (konfigureras i `fresh.config.ts`)
-- **Backend**: 8000 (konfigureras i `backend/main.ts`)
+# Backend  
+deno task start      # Start API server
+```
 
-### CORS
-Backend är konfigurerad för att acceptera requests från frontend på port 8090.
+### **Configuration**
+- **JSX**: `react-jsx` with Preact
+- **Import Maps**: ESM.sh for dependencies
+- **TypeScript**: Strict mode enabled
+- **Hot Reload**: File watching enabled
 
-## 📊 Prestanda
+## 🌐 Deployment
 
-- **Server-Side Rendering**: Fresh ger snabb initial laddning
-- **TypeScript**: Typsäkerhet genom hela stacken
-- **Deno**: Modern runtime utan node_modules
-- **TailwindCSS**: Optimerad CSS-bundle
+### **Deno Deploy** (Recommended)
+```bash
+# Deploy frontend
+deployctl deploy --project=smart-choice frontend/fresh-frontend/main.ts
 
-## 🚀 Deployment
+# Deploy backend API
+deployctl deploy --project=smart-choice-api backend/main.ts
+```
 
-Projektet är förberett för deployment på **Deno Deploy**:
+### **Docker**
+```dockerfile
+FROM denoland/deno:alpine
+WORKDIR /app
+COPY . .
+RUN deno cache frontend/fresh-frontend/main.ts
+EXPOSE 8090
+CMD ["deno", "run", "-A", "frontend/fresh-frontend/main.ts"]
+```
 
-1. Backend kan deployas direkt från `backend/main.ts`
-2. Frontend kan deployas från `frontend/fresh-frontend/`
-3. Environment variables för produktionsmiljö
+## 📊 Sample Data
 
-## 🐛 Felsökning
+The engine includes **3 customer personas**:
 
-### Vanliga problem
-- **Port konflikter**: Kontrollera att portarna 8000 och 8090 är lediga
-- **CORS-fel**: Verifiera att backend CORS är konfigurerad för rätt frontend-port
-- **Deno permissions**: Använd `--allow-net --allow-read` flaggor
+- **👩 Emma** - Fashion enthusiast, Stockholm
+- **👨 Johan** - Tech professional, Göteborg  
+- **👩 Lisa** - Beauty expert, Malmö
 
-### Debug information
-Applikationen visar debug-panel längst ner med:
-- Antal kunder
-- Vald kund
-- Antal rekommendationer
-- API-status
+Each customer has **unique behavioral patterns** that generate different recommendations using our ML algorithms.
 
-## 📝 Nästa steg
+## 🤝 Contributing
 
-- [ ] Integrera frontend med backend API
-- [ ] Lägg till WebSocket för real-time uppdateringar
-- [ ] Implementera A/B-testning av algoritmer
-- [ ] Lägg till användarautentisering
-- [ ] Databas-integration för persistent data
-- [ ] Avancerade ML-modeller med träning
+1. **Fork** the repository
+2. **Create** feature branch (`git checkout -b feature/AmazingFeature`)
+3. **Commit** changes (`git commit -m 'Add AmazingFeature'`)
+4. **Push** branch (`git push origin feature/AmazingFeature`)
+5. **Open** Pull Request
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+## 🔗 Links
+
+- **Repository**: [https://github.com/screamm/Smart_Choice_Engine](https://github.com/screamm/Smart_Choice_Engine)
+- **Fresh Framework**: [https://fresh.deno.dev](https://fresh.deno.dev)
+- **Deno Runtime**: [https://deno.land](https://deno.land)
 
 ---
 
-**Utvecklad för Voyado** - Demonstrerar förståelse för e-handel, personalisering och kundengagemang genom modern teknologi. 
+**Built with ❤️ using Fresh + Deno + TypeScript**
+
+*Smart Choice Engine - Making AI recommendations accessible and intelligent.* 

@@ -1,22 +1,32 @@
-// TypeScript interfaces för Voyado Smart Recommendations
+// TypeScript interfaces for Smart Choice Engine
+
 export interface Customer {
   id: number;
   name: string;
-  age: number;
-  location: string;
+  email: string;
+  segment: string;
   totalPurchases: number;
-  avgOrderValue: number;
+  avgOrderValue: string;
   favoriteCategories: string[];
   lastActive: string;
-  purchaseHistory: string[];
+  location: string;
   behaviorScore: number;
-  segment: string;
+}
+
+export interface Product {
+  id: number;
+  name: string;
+  price: number;
+  category: string;
+  description: string;
+  image: string;
+  inStock: boolean;
+  rating: number;
 }
 
 export interface Recommendation {
-  id: number;
+  productId: number;
   name: string;
-  category: string;
   price: number;
   image: string;
   recommendationScore: number;

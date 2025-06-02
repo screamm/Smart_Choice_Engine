@@ -1,265 +1,311 @@
-// main.ts - Deno Backend Server för Voyado Recommendation Engine
-import { Application, Router, Context } from "https://deno.land/x/oak@v12.6.1/mod.ts";
+// main.ts - Deno Backend Server för Smart Choice Engine
+import { Application, Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 
-interface Customer {
-  id: number;
-  name: string;
-  age: number;
-  location: string;
-  totalPurchases: number;
-  avgOrderValue: number;
-  favoriteCategories: string[];
-  lastActive: string;
-  purchaseHistory: string[];
-  behaviorScore: number;
-  segment: string;
-}
-
-interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: number;
-  image: string;
-  tags: string[];
-  popularity: number;
-}
-
-interface Recommendation extends Product {
-  recommendationScore: number;
-  reason: string;
-  algorithms: string[];
-  confidence: number;
-}
-
-class MLRecommendationEngine {
-  private customers: Customer[] = [
-    {
-      id: 1,
-      name: "Emma Andersson",
-      age: 28,
-      location: "Stockholm",
-      totalPurchases: 12,
-      avgOrderValue: 1250,
-      favoriteCategories: ["Fashion", "Accessories"],
-      lastActive: "2 timmar sedan",
-      purchaseHistory: ["Jeans", "Tröja", "Handväska", "Sneakers"],
-      behaviorScore: 0.85,
-      segment: "Mode-entusiast"
-    },
-    {
-      id: 2,
-      name: "Johan Karlsson",
-      age: 35,
-      location: "Göteborg",
-      totalPurchases: 8,
-      avgOrderValue: 2100,
-      favoriteCategories: ["Elektronik", "Gaming"],
-      lastActive: "1 dag sedan",
-      purchaseHistory: ["Laptop", "Hörlurar", "Gaming-mus", "Skärm"],
-      behaviorScore: 0.72,
-      segment: "Teknikintresserad"
-    },
-    {
-      id: 3,
-      name: "Lisa Nilsson",
-      age: 31,
-      location: "Malmö",
-      totalPurchases: 15,
-      avgOrderValue: 890,
-      favoriteCategories: ["Skönhet", "Hudvård"],
-      lastActive: "30 minuter sedan",
-      purchaseHistory: ["Foundation", "Serum", "Fuktkräm", "Läppstift"],
-      behaviorScore: 0.91,
-      segment: "Skönhetsexpert"
-    }
-  ];
-
-  private products: Product[] = [
-    {
-      id: 1,
-      name: "Premium Jeansjacka",
-      category: "Fashion",
-      price: 899,
-      image: "👕",
-      tags: ["denim", "casual", "trendig"],
-      popularity: 0.78
-    },
-    {
-      id: 2,
-      name: "Trådlöst Gaming Headset",
-      category: "Elektronik",
-      price: 1299,
-      image: "🎧",
-      tags: ["gaming", "trådlös", "premium"],
-      popularity: 0.84
-    },
-    {
-      id: 3,
-      name: "Anti-Age Serum",
-      category: "Skönhet",
-      price: 649,
-      image: "💄",
-      tags: ["hudvård", "anti-age", "premium"],
-      popularity: 0.69
-    },
-    {
-      id: 4,
-      name: "Läder Axelremsväska",
-      category: "Accessories",
-      price: 1199,
-      image: "👜",
-      tags: ["läder", "handväska", "elegant"],
-      popularity: 0.73
-    },
-    {
-      id: 5,
-      name: "4K Gaming Skärm",
-      category: "Elektronik",
-      price: 3299,
-      image: "🖥️",
-      tags: ["gaming", "4k", "skärm"],
-      popularity: 0.81
-    },
-    {
-      id: 6,
-      name: "Vitamin C Ansiktsmask",
-      category: "Skönhet",
-      price: 299,
-      image: "🧴",
-      tags: ["hudvård", "vitamin-c", "mask"],
-      popularity: 0.65
-    }
-  ];
-
-  public generateRecommendations(customerId: number, limit = 4): Recommendation[] {
-    const customer = this.customers.find(c => c.id === customerId);
-    if (!customer) return [];
-
-    // ML-algoritm simulering
-    const recommendations = this.products
-      .map(product => {
-        let score = 0;
-        
-        // Kategori-matchning (40% vikt)
-        if (customer.favoriteCategories.includes(product.category)) {
-          score += 0.4;
-        }
-        
-        // Popularitet (30% vikt)
-        score += product.popularity * 0.3;
-        
-        // Kundbeteende (30% vikt)
-        score += customer.behaviorScore * 0.3;
-        
-        // Lägg till lite slumpmässighet för variation
-        score += (Math.random() - 0.5) * 0.1;
-        
-        return {
-          ...product,
-          recommendationScore: Math.min(score, 1),
-          reason: this.getRecommendationReason(customer, product, score),
-          algorithms: ['collaborative_filtering', 'content_based'],
-          confidence: Math.min(score, 1)
-        };
-      })
-      .sort((a, b) => b.recommendationScore - a.recommendationScore)
-      .slice(0, limit);
-
-    return recommendations;
-  }
-
-  private getRecommendationReason(customer: Customer, product: Product, score: number): string {
-    const reasons = [
-      `Populär bland ${customer.segment}-kunder`,
-      `Matchar ditt intresse för ${product.category}`,
-      `Köps ofta av kunder i ${customer.location}`,
-      `Liknar ditt senaste ${customer.purchaseHistory[0]}-köp`,
-      `Trendande i din åldersgrupp (${customer.age} år)`
-    ];
-    
-    return reasons[Math.floor(Math.random() * reasons.length)];
-  }
-
-  public getCustomers(): Customer[] {
-    return this.customers;
-  }
-
-  public getAnalytics() {
-    return {
-      totalCustomers: this.customers.length,
-      totalProducts: this.products.length,
-      avgBehaviorScore: this.customers.reduce((sum, c) => sum + c.behaviorScore, 0) / this.customers.length,
-      modelAccuracy: 0.87,
-      lastModelUpdate: new Date().toISOString()
-    };
-  }
-}
-
-// Initiera app
-const app = new Application();
 const router = new Router();
-const mlEngine = new MLRecommendationEngine();
+const app = new Application();
 
-// Middleware
+// CORS - Tillåt requests från Fresh frontend på port 8090
 app.use(oakCors({
-  origin: ["http://localhost:8090", "http://127.0.0.1:8090"],
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  origin: "http://localhost:8090",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-// API Routes
-router.get('/api/customers', (ctx: Context) => {
-  ctx.response.body = mlEngine.getCustomers();
+// Middleware för logging
+app.use(async (ctx, next) => {
+  console.log(`${ctx.request.method} ${ctx.request.url}`);
+  await next();
 });
 
-router.get('/api/recommendations/:customerId', (ctx: Context) => {
-  const customerId = parseInt(ctx.params.customerId);
-  const limit = parseInt(ctx.request.url.searchParams.get('limit') || '4');
-  
-  if (isNaN(customerId)) {
-    ctx.response.status = 400;
-    ctx.response.body = { error: 'Ogiltigt kund-ID' };
-    return;
+// Mock data - Kunder
+const customers = [
+  {
+    id: 1,
+    name: "Emma Andersson",
+    email: "emma@example.com",
+    age: 28,
+    location: "Stockholm",
+    totalPurchases: 15,
+    avgOrderValue: 1250,
+    favoriteCategories: ["Fashion", "Accessories"],
+    lastActive: "2024-01-15",
+    purchaseHistory: ["Jeans", "Väska", "Skor"],
+    behaviorScore: 0.85,
+    segment: "Fashion Enthusiast"
+  },
+  {
+    id: 2,
+    name: "Johan Karlsson", 
+    email: "johan@example.com",
+    age: 34,
+    location: "Göteborg",
+    totalPurchases: 8,
+    avgOrderValue: 2100,
+    favoriteCategories: ["Electronics", "Gaming"],
+    lastActive: "2024-01-14",
+    purchaseHistory: ["Headset", "Tangentbord", "Mus"],
+    behaviorScore: 0.72,
+    segment: "Tech Professional"
+  },
+  {
+    id: 3,
+    name: "Lisa Nilsson",
+    email: "lisa@example.com", 
+    age: 31,
+    location: "Malmö",
+    totalPurchases: 22,
+    avgOrderValue: 890,
+    favoriteCategories: ["Beauty", "Skincare"],
+    lastActive: "2024-01-16",
+    purchaseHistory: ["Serum", "Mascara", "Foundation"],
+    behaviorScore: 0.93,
+    segment: "Beauty Expert"
   }
+];
 
-  const recommendations = mlEngine.generateRecommendations(customerId, limit);
-  ctx.response.body = {
-    customerId,
-    recommendations,
-    generatedAt: new Date().toISOString()
+// Mock data - Produkter
+const products = [
+  {
+    id: 1,
+    name: "Premium Jeansjacka",
+    category: "Fashion", 
+    price: 899,
+    description: "Vintage-inspirerad jeansjacka i premium denim",
+    image: "👕",
+    inStock: true,
+    rating: 4.5
+  },
+  {
+    id: 2,
+    name: "Trådlöst Gaming Headset",
+    category: "Electronics",
+    price: 1299,
+    description: "Professionellt gaming headset med surround sound",
+    image: "🎧", 
+    inStock: true,
+    rating: 4.7
+  },
+  {
+    id: 3,
+    name: "Anti-Age Serum",
+    category: "Beauty",
+    price: 449,
+    description: "Avancerat anti-age serum med retinol",
+    image: "🧴",
+    inStock: true,
+    rating: 4.3
+  },
+  {
+    id: 4,
+    name: "Läder Axelremsväska",
+    category: "Accessories",
+    price: 1599,
+    description: "Handgjord läderväska i italienskt läder",
+    image: "👜",
+    inStock: true,
+    rating: 4.6
+  },
+  {
+    id: 5,
+    name: "4K Gaming Skärm",
+    category: "Electronics", 
+    price: 3299,
+    description: "27-tums 4K gaming monitor med 144Hz",
+    image: "🖥️",
+    inStock: false,
+    rating: 4.8
+  },
+  {
+    id: 6,
+    name: "Vitamin C Ansiktsmask",
+    category: "Beauty",
+    price: 199,
+    description: "Uppljusande ansiktsmask med vitamin C",
+    image: "✨",
+    inStock: true,
+    rating: 4.1
+  },
+  {
+    id: 7,
+    name: "Smartwatch Pro",
+    category: "Electronics",
+    price: 2499,
+    description: "Avancerad smartwatch med fitness tracking",
+    image: "⌚",
+    inStock: true,
+    rating: 4.4
+  },
+  {
+    id: 8,
+    name: "Designer Solglasögon",
+    category: "Fashion",
+    price: 799,
+    description: "Polariserade designersolglasögon",
+    image: "🕶️", 
+    inStock: true,
+    rating: 4.2
+  }
+];
+
+// ML-algoritmer för rekommendationer
+function generateRecommendations(customerId: number) {
+  const customer = customers.find(c => c.id === customerId);
+  if (!customer) return [];
+
+  const recommendations = products.map(product => {
+    // Collaborative Filtering - hitta liknande kunder
+    const collaborativeScore = calculateCollaborativeScore(customer, product);
+    
+    // Content-Based Filtering - matcha kategorier
+    const contentScore = calculateContentScore(customer, product);
+    
+    // Behavioral Score - använd kundens beteendepoäng
+    const behaviorScore = customer.behaviorScore;
+    
+    // Kombinera scores med viktning
+    const finalScore = (collaborativeScore * 0.4) + (contentScore * 0.4) + (behaviorScore * 0.2);
+    
+    // Lägg till slumpmässig variation för diversifiering
+    const randomVariation = Math.random() * 0.1;
+    const adjustedScore = Math.min(finalScore + randomVariation, 1.0);
+    
+    return {
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      recommendationScore: adjustedScore,
+      reason: generateReason(customer, product, contentScore, collaborativeScore),
+      algorithms: determineAlgorithms(contentScore, collaborativeScore, behaviorScore)
+    };
+  });
+  
+  // Sortera efter score och returnera top 4
+  return recommendations
+    .sort((a, b) => b.recommendationScore - a.recommendationScore)
+    .slice(0, 4);
+}
+
+function calculateCollaborativeScore(customer: any, product: any): number {
+  // Simulera collaborative filtering genom att hitta liknande kunder
+  const similarCustomers = customers.filter(c => 
+    c.id !== customer.id && 
+    c.favoriteCategories.some(cat => customer.favoriteCategories.includes(cat))
+  );
+  
+  if (similarCustomers.length === 0) return 0.3;
+  
+  // Simulera att liknande kunder köpt produkten
+  const score = similarCustomers.length / customers.length;
+  return Math.min(score * 1.5, 1.0);
+}
+
+function calculateContentScore(customer: any, product: any): number {
+  // Matcha produktkategori mot kundens favoritkategorier
+  const categoryMatch = customer.favoriteCategories.includes(product.category);
+  
+  if (categoryMatch) {
+    // Justera baserat på produktens rating och kundens köphistorik
+    const ratingBonus = (product.rating - 4.0) * 0.1;
+    return Math.min(0.7 + ratingBonus, 1.0);
+  }
+  
+  return Math.random() * 0.4; // Låg score för icke-matchande kategorier
+}
+
+function generateReason(customer: any, product: any, contentScore: number, collaborativeScore: number): string {
+  if (contentScore > collaborativeScore) {
+    return `Perfect match för ${customer.favoriteCategories.join(' & ')}-älskare`;
+  } else if (collaborativeScore > 0.6) {
+    return `Populär bland kunder med liknande smak`;
+  } else if (customer.behaviorScore > 0.8) {
+    return `Rekommenderas för aktiva premium-kunder`;
+  } else {
+    return `Trending produkt i din demografiska grupp`;
+  }
+}
+
+function determineAlgorithms(contentScore: number, collaborativeScore: number, behaviorScore: number): string[] {
+  const algorithms = [];
+  
+  if (contentScore > 0.5) algorithms.push("CONTENT");
+  if (collaborativeScore > 0.5) algorithms.push("COLLABORATIVE");  
+  if (behaviorScore > 0.7) algorithms.push("BEHAVIORAL");
+  
+  return algorithms.length > 0 ? algorithms : ["HYBRID"];
+}
+
+// Routes
+router.get("/health", (ctx) => {
+  ctx.response.body = { 
+    status: "healthy", 
+    service: "Smart Choice Engine API",
+    timestamp: new Date().toISOString() 
   };
 });
 
-router.get('/api/analytics', (ctx: Context) => {
-  ctx.response.body = mlEngine.getAnalytics();
+router.get("/api/customers", (ctx) => {
+  ctx.response.body = {
+    success: true,
+    data: customers.map(c => ({
+      id: c.id,
+      name: c.name,
+      segment: c.segment,
+      location: c.location,
+      totalPurchases: c.totalPurchases,
+      avgOrderValue: c.avgOrderValue,
+      behaviorScore: c.behaviorScore
+    }))
+  };
 });
 
-// Health check
-router.get('/health', (ctx: Context) => {
+router.get("/api/recommendations/:customerId", (ctx) => {
+  const customerId = parseInt(ctx.params.customerId || "0");
+  const recommendations = generateRecommendations(customerId);
+  
   ctx.response.body = {
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    version: '1.0.0'
+    success: true,
+    customerId: customerId,
+    data: recommendations,
+    generated: new Date().toISOString()
   };
+});
+
+router.get("/api/analytics", (ctx) => {
+  ctx.response.body = {
+    success: true,
+    data: {
+      totalCustomers: customers.length,
+      totalProducts: products.length,
+      avgBehaviorScore: customers.reduce((sum, c) => sum + c.behaviorScore, 0) / customers.length,
+      topSegments: ["Fashion Enthusiast", "Tech Professional", "Beauty Expert"]
+    }
+  };
+});
+
+// Error handling
+app.use(async (ctx, next) => {
+  try {
+    await next();
+  } catch (err) {
+    console.error("Error:", err);
+    ctx.response.status = 500;
+    ctx.response.body = { 
+      success: false, 
+      error: "Internal server error" 
+    };
+  }
 });
 
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-// Start server
+const hostname = "0.0.0.0";
 const port = 8000;
-const hostname = "0.0.0.0"; // Bind till alla interfaces
 
-console.log(`🚀 Voyado Recommendation Engine API startar på ${hostname}:${port}`);
-console.log(`📊 ML Engine initierad med ${mlEngine.getCustomers().length} kunder`);
-console.log(`🧠 Multi-algoritm rekommendationssystem redo`);
+console.log(`🚀 Smart Choice Engine API startar på ${hostname}:${port}`);
+console.log(`📊 Testdata: ${customers.length} kunder, ${products.length} produkter`);
+console.log(`🔗 Health check: http://localhost:${port}/health`);
 
-try {
-  await app.listen({ port, hostname });
-} catch (error) {
-  console.error("❌ Fel vid start av server:", error);
-  Deno.exit(1);
-} 
+await app.listen({ hostname, port }); 
