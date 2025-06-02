@@ -63,21 +63,6 @@ export default function CustomerList({ selectedCustomerId }: Props) {
     fetchCustomers();
   }, []);
 
-  const getSegmentColor = (segment: string) => {
-    switch (segment) {
-      case "Fashion Enthusiast": return "text-pink-400 bg-pink-400/10";
-      case "Tech Professional": return "text-blue-400 bg-blue-400/10";
-      case "Beauty Expert": return "text-purple-400 bg-purple-400/10";
-      default: return "text-zinc-400 bg-zinc-400/10";
-    }
-  };
-
-  const getBehaviorColor = (score: number) => {
-    if (score >= 0.8) return "text-emerald-400";
-    if (score >= 0.6) return "text-yellow-400";
-    return "text-orange-400";
-  };
-
   const handleCustomerClick = (customer: Customer) => {
     console.log("🎯 Customer clicked:", customer.name);
     
@@ -93,75 +78,152 @@ export default function CustomerList({ selectedCustomerId }: Props) {
     }
   };
 
+  const getSegmentColor = (segment: string) => {
+    switch (segment) {
+      case "Fashion Enthusiast": return { 
+        text: "text-pink-300", 
+        bg: "bg-pink-500/10", 
+        border: "border-pink-500/20",
+        dot: "bg-pink-400"
+      };
+      case "Tech Professional": return { 
+        text: "text-blue-300", 
+        bg: "bg-blue-500/10", 
+        border: "border-blue-500/20",
+        dot: "bg-blue-400"
+      };
+      case "Beauty Expert": return { 
+        text: "text-purple-300", 
+        bg: "bg-purple-500/10", 
+        border: "border-purple-500/20",
+        dot: "bg-purple-400"
+      };
+      default: return { 
+        text: "text-zinc-300", 
+        bg: "bg-zinc-500/10", 
+        border: "border-zinc-500/20",
+        dot: "bg-zinc-400"
+      };
+    }
+  };
+
+  const getBehaviorColor = (score: number) => {
+    if (score >= 0.8) return "text-emerald-400";
+    if (score >= 0.6) return "text-yellow-400";
+    return "text-orange-400";
+  };
+
   return (
-    <div class="bg-zinc-900 border border-zinc-800 p-4">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-sm font-mono uppercase tracking-wider text-zinc-400">
-          Select Customer ({customers.length} loaded)
-        </h2>
+    <div class="bg-white/[0.02] border border-zinc-800/50 rounded-xl p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-lg font-semibold text-zinc-100">
+            Customers
+          </h2>
+          <p class="text-sm text-zinc-400 mt-1">
+            {customers.length} available
+          </p>
+        </div>
         <button 
           onClick={() => fetchCustomers()}
-          class="px-2 py-1 text-xs bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded font-mono transition-colors"
+          class="px-3 py-2 text-sm bg-zinc-800/50 hover:bg-zinc-700/50 text-zinc-300 rounded-lg font-medium transition-colors disabled:opacity-50"
           disabled={loading}
         >
           {loading ? "Loading..." : "Refresh"}
         </button>
       </div>
       
-      <div class="space-y-2">
+      <div class="space-y-3">
         {error ? (
-          <div class="p-3 border border-red-700 bg-red-900/20 text-center">
-            <div class="text-red-400 text-sm">Error loading customers</div>
-            <div class="text-red-500 text-xs mt-1">{error}</div>
+          <div class="p-4 border border-red-500/20 bg-red-500/10 rounded-lg text-center">
+            <div class="text-red-400 text-sm font-medium">Error loading customers</div>
+            <div class="text-red-500/80 text-xs mt-1">{error}</div>
           </div>
         ) : loading ? (
-          <div class="p-3 border border-zinc-700 text-center">
-            <div class="text-zinc-500 text-sm">Loading customers...</div>
-            <div class="text-zinc-600 text-xs mt-1">
-              Fetching from http://localhost:8000/api/customers
-            </div>
+          <div class="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} class="p-4 border border-zinc-800/50 rounded-lg">
+                <div class="animate-pulse">
+                  <div class="h-4 bg-zinc-800/50 rounded mb-2"></div>
+                  <div class="h-3 bg-zinc-800/30 rounded w-2/3"></div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : customers.length === 0 ? (
-          <div class="p-3 border border-yellow-700 bg-yellow-900/20 text-center">
-            <div class="text-yellow-400 text-sm">No customers found</div>
-            <div class="text-yellow-500 text-xs mt-1">API returned empty data</div>
+          <div class="p-4 border border-yellow-500/20 bg-yellow-500/10 rounded-lg text-center">
+            <div class="text-yellow-400 text-sm font-medium">No customers found</div>
+            <div class="text-yellow-500/80 text-xs mt-1">API returned empty data</div>
           </div>
         ) : (
-          customers.map(customer => (
-            <div
-              key={customer.id}
-              onClick={() => handleCustomerClick(customer)}
-              class={`p-3 border cursor-pointer transition-all duration-200 ${
-                selectedCustomerId === customer.id 
-                  ? 'border-emerald-400 bg-emerald-400/5' 
-                  : 'border-zinc-700 hover:border-zinc-600'
-              }`}
-            >
-              <div class="flex items-center justify-between mb-2">
-                <span class="font-medium text-zinc-200">{customer.name}</span>
-                <span class={`text-xs px-2 py-1 rounded ${getSegmentColor(customer.segment)}`}>
-                  {customer.segment.split(' ')[0]}
-                </span>
+          customers.map(customer => {
+            const segmentStyle = getSegmentColor(customer.segment);
+            const isSelected = selectedCustomerId === customer.id;
+            
+            return (
+              <div
+                key={customer.id}
+                onClick={() => handleCustomerClick(customer)}
+                class={`group p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
+                  isSelected 
+                    ? 'border-emerald-400/50 bg-emerald-400/5 shadow-lg shadow-emerald-500/10' 
+                    : 'border-zinc-800/50 hover:border-zinc-700/70 hover:bg-white/[0.02]'
+                }`}
+              >
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class={`w-10 h-10 ${segmentStyle.bg} ${segmentStyle.border} border rounded-full flex items-center justify-center`}>
+                      <div class={`w-2 h-2 ${segmentStyle.dot} rounded-full`}></div>
+                    </div>
+                    <div>
+                      <h3 class="font-medium text-zinc-100 group-hover:text-white transition-colors">
+                        {customer.name}
+                      </h3>
+                      <p class="text-sm text-zinc-400">
+                        {customer.location}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div class={`px-2 py-1 ${segmentStyle.bg} ${segmentStyle.border} border rounded-md`}>
+                    <span class={`text-xs font-medium ${segmentStyle.text}`}>
+                      {customer.segment.split(' ')[0]}
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-3 text-center">
+                  <div>
+                    <div class="text-sm font-semibold text-zinc-300">
+                      {customer.totalPurchases}
+                    </div>
+                    <div class="text-xs text-zinc-500">Purchases</div>
+                  </div>
+                  <div>
+                    <div class="text-sm font-semibold text-zinc-300">
+                      {(customer.avgOrderValue / 1000).toFixed(1)}k
+                    </div>
+                    <div class="text-xs text-zinc-500">Avg Order</div>
+                  </div>
+                  <div>
+                    <div class={`text-sm font-semibold ${getBehaviorColor(customer.behaviorScore)}`}>
+                      {(customer.behaviorScore * 100).toFixed(0)}%
+                    </div>
+                    <div class="text-xs text-zinc-500">Engagement</div>
+                  </div>
+                </div>
+
+                {isSelected && (
+                  <div class="mt-3 pt-3 border-t border-emerald-400/20">
+                    <div class="flex items-center gap-2 text-xs text-emerald-400">
+                      <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
+                      <span>Selected for recommendations</span>
+                    </div>
+                  </div>
+                )}
               </div>
-              
-              <div class="text-xs text-zinc-500 space-y-1">
-                <div class="flex justify-between">
-                  <span>Purchases:</span>
-                  <span>{customer.totalPurchases}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Avg Value:</span>
-                  <span>{customer.avgOrderValue.toLocaleString()} kr</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Behavior:</span>
-                  <span class={getBehaviorColor(customer.behaviorScore)}>
-                    {(customer.behaviorScore * 100).toFixed(0)}%
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

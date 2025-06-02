@@ -110,30 +110,28 @@ export default function MainApp({ showAdvancedMode }: Props) {
   }, []);
 
   return (
-    <div class="grid grid-cols-12 gap-6">
+    <div class="grid grid-cols-12 gap-8">
       {/* Left Sidebar - Customer List & Real-time Monitor */}
-      <div class="col-span-3 space-y-6">
-        {/* Customer Selection */}
+      <div class="col-span-3 space-y-8">
         <CustomerList 
           selectedCustomerId={selectedCustomer?.id}
         />
 
-        {/* Real-time System Monitor */}
         {showAdvancedMode && <RealtimeUpdates />}
       </div>
 
       {/* Center - Recommendations */}
       <div class="col-span-6">
         {selectedCustomer ? (
-          <div>
+          <div class="space-y-6">
             {/* Customer Header */}
-            <div class="bg-zinc-900 border border-zinc-800 p-6 mb-6">
-              <div class="flex items-center justify-between mb-4">
+            <div class="bg-white/[0.02] border border-zinc-800/50 rounded-xl p-6">
+              <div class="flex items-center justify-between mb-6">
                 <div>
-                  <h2 class="text-xl font-semibold text-zinc-100">
+                  <h2 class="text-2xl font-semibold text-zinc-100">
                     Recommendations for {selectedCustomer.name}
                   </h2>
-                  <p class="text-sm text-zinc-400">
+                  <p class="text-zinc-400 mt-1">
                     {selectedCustomer.segment} • {selectedCustomer.location}
                   </p>
                 </div>
@@ -143,19 +141,19 @@ export default function MainApp({ showAdvancedMode }: Props) {
                   <div class="flex gap-2">
                     <button 
                       onClick={() => handleVariantTest("variant_a")}
-                      class="px-3 py-1 text-xs bg-emerald-600 text-white rounded font-mono hover:bg-emerald-700 transition-colors"
+                      class="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors"
                     >
                       Test A
                     </button>
                     <button 
                       onClick={() => handleVariantTest("variant_b")}
-                      class="px-3 py-1 text-xs bg-blue-600 text-white rounded font-mono hover:bg-blue-700 transition-colors"
+                      class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
                     >
                       Test B
                     </button>
                     <button 
                       onClick={() => handleVariantTest("variant_c")}
-                      class="px-3 py-1 text-xs bg-purple-600 text-white rounded font-mono hover:bg-purple-700 transition-colors"
+                      class="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
                     >
                       Test C
                     </button>
@@ -164,46 +162,52 @@ export default function MainApp({ showAdvancedMode }: Props) {
               </div>
               
               {/* Customer Stats */}
-              <div class="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div class="text-lg font-light text-emerald-400">
+              <div class="grid grid-cols-3 gap-6">
+                <div class="text-center">
+                  <div class="text-2xl font-light text-emerald-400 mb-1">
                     {selectedCustomer.totalPurchases}
                   </div>
-                  <div class="text-xs text-zinc-500 font-mono uppercase">Purchases</div>
+                  <div class="text-sm text-zinc-500 font-medium uppercase tracking-wider">
+                    Purchases
+                  </div>
                 </div>
-                <div>
-                  <div class="text-lg font-light text-blue-400">
+                <div class="text-center">
+                  <div class="text-2xl font-light text-blue-400 mb-1">
                     {selectedCustomer.avgOrderValue.toLocaleString()} kr
                   </div>
-                  <div class="text-xs text-zinc-500 font-mono uppercase">Avg Order</div>
+                  <div class="text-sm text-zinc-500 font-medium uppercase tracking-wider">
+                    Avg Order
+                  </div>
                 </div>
-                <div>
-                  <div class={`text-lg font-light ${getBehaviorColor(selectedCustomer.behaviorScore)}`}>
+                <div class="text-center">
+                  <div class={`text-2xl font-light mb-1 ${getBehaviorColor(selectedCustomer.behaviorScore)}`}>
                     {(selectedCustomer.behaviorScore * 100).toFixed(0)}%
                   </div>
-                  <div class="text-xs text-zinc-500 font-mono uppercase">Engagement</div>
+                  <div class="text-sm text-zinc-500 font-medium uppercase tracking-wider">
+                    Engagement
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Recommendations Grid */}
             {loading ? (
-              <div class="grid grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {[1, 2, 3, 4].map(i => (
-                  <div key={i} class="bg-zinc-900 border border-zinc-800 p-6">
+                  <div key={i} class="bg-white/[0.02] border border-zinc-800/50 rounded-xl p-6">
                     <div class="animate-pulse">
-                      <div class="h-4 bg-zinc-700 rounded mb-2"></div>
-                      <div class="h-6 bg-zinc-800 rounded mb-4"></div>
+                      <div class="h-6 bg-zinc-800/50 rounded mb-3"></div>
+                      <div class="h-8 bg-zinc-800/30 rounded mb-4"></div>
                       <div class="space-y-2">
-                        <div class="h-3 bg-zinc-700 rounded"></div>
-                        <div class="h-3 bg-zinc-700 rounded w-2/3"></div>
+                        <div class="h-4 bg-zinc-800/30 rounded"></div>
+                        <div class="h-4 bg-zinc-800/30 rounded w-2/3"></div>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div class="grid grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {recommendations.map(recommendation => (
                   <RecommendationCard 
                     key={recommendation.productId} 
@@ -215,12 +219,12 @@ export default function MainApp({ showAdvancedMode }: Props) {
             )}
           </div>
         ) : (
-          <div class="bg-zinc-900 border border-zinc-800 p-12 text-center">
-            <div class="text-4xl mb-4">🎯</div>
-            <h2 class="text-xl font-semibold text-zinc-300 mb-2">
+          <div class="bg-white/[0.02] border border-zinc-800/50 rounded-xl p-12 text-center">
+            <div class="text-6xl mb-6 opacity-50">🎯</div>
+            <h2 class="text-2xl font-semibold text-zinc-300 mb-3">
               Select a Customer
             </h2>
-            <p class="text-zinc-500">
+            <p class="text-zinc-500 text-lg leading-relaxed max-w-md mx-auto">
               Välj en kund från listan för att se personaliserade rekommendationer
             </p>
           </div>
@@ -232,19 +236,31 @@ export default function MainApp({ showAdvancedMode }: Props) {
         {showAdvancedMode ? (
           <ABTestDashboard />
         ) : (
-          <div class="bg-zinc-900 border border-zinc-800 p-6">
-            <h3 class="text-sm font-mono uppercase tracking-wider text-zinc-400 mb-4">
+          <div class="bg-white/[0.02] border border-zinc-800/50 rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-zinc-100 mb-4">
               Analytics Preview
             </h3>
-            <p class="text-sm text-zinc-500 mb-4">
-              Enable Advanced Mode to access:
+            <p class="text-zinc-400 mb-6 leading-relaxed">
+              Enable Advanced Mode to access enterprise features:
             </p>
-            <ul class="text-xs text-zinc-600 space-y-2">
-              <li>• A/B Testing Dashboard</li>
-              <li>• Real-time System Monitor</li>
-              <li>• Advanced ML Confidence</li>
-              <li>• Algorithm Transparency</li>
-            </ul>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3 text-sm text-zinc-500">
+                <div class="w-2 h-2 bg-emerald-400/50 rounded-full"></div>
+                <span>A/B Testing Dashboard</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm text-zinc-500">
+                <div class="w-2 h-2 bg-blue-400/50 rounded-full"></div>
+                <span>Real-time System Monitor</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm text-zinc-500">
+                <div class="w-2 h-2 bg-purple-400/50 rounded-full"></div>
+                <span>Advanced ML Confidence</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm text-zinc-500">
+                <div class="w-2 h-2 bg-yellow-400/50 rounded-full"></div>
+                <span>Algorithm Transparency</span>
+              </div>
+            </div>
           </div>
         )}
       </div>

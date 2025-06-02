@@ -1,3 +1,5 @@
+import { useState } from "preact/hooks";
+
 interface Recommendation {
   productId: number;
   name: string;
@@ -17,204 +19,160 @@ interface Recommendation {
 
 interface Props {
   recommendation: Recommendation;
-  onSelect?: (productId: number) => void;
+  onSelect: (productId: number) => void;
 }
 
 export default function RecommendationCard({ recommendation, onSelect }: Props) {
-  const handleClick = () => {
-    onSelect?.(recommendation.productId);
-  };
-
-  const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return "text-emerald-400 bg-emerald-400/10 border-emerald-400/30";
-    if (confidence >= 0.6) return "text-yellow-400 bg-yellow-400/10 border-yellow-400/30";
-    if (confidence >= 0.4) return "text-orange-400 bg-orange-400/10 border-orange-400/30";
-    return "text-red-400 bg-red-400/10 border-red-400/30";
-  };
+  const [isHovered, setIsHovered] = useState(false);
 
   const getConfidenceLevel = (confidence: number) => {
-    if (confidence >= 0.9) return "VERY HIGH";
-    if (confidence >= 0.8) return "HIGH";
-    if (confidence >= 0.6) return "MODERATE";
-    if (confidence >= 0.4) return "LOW";
-    return "VERY LOW";
+    if (confidence >= 0.85) return { level: "VERY HIGH", color: "text-emerald-400", bg: "bg-emerald-500/20" };
+    if (confidence >= 0.75) return { level: "HIGH", color: "text-green-400", bg: "bg-green-500/20" };
+    if (confidence >= 0.65) return { level: "MODERATE", color: "text-yellow-400", bg: "bg-yellow-500/20" };
+    return { level: "LOW", color: "text-orange-400", bg: "bg-orange-500/20" };
   };
 
-  const getAlgorithmIcon = (algorithm: string) => {
-    switch (algorithm) {
-      case "COLLABORATIVE": return "👥";
-      case "CONTENT": return "🏷️";
-      case "BEHAVIORAL": return "🧠";
-      case "HYBRID": return "⚡";
-      default: return "🔮";
-    }
-  };
-
-  const getVariantBadge = (variant?: string) => {
-    if (!variant) return null;
-    
-    const colors = {
-      variant_a: "bg-emerald-600",
-      variant_b: "bg-blue-600", 
-      variant_c: "bg-purple-600"
-    };
-    
-    return (
-      <span class={`text-xs px-2 py-0.5 rounded font-mono text-white ${colors[variant as keyof typeof colors] || 'bg-zinc-600'}`}>
-        {variant.replace('variant_', 'V').toUpperCase()}
-      </span>
-    );
+  const confidence = getConfidenceLevel(recommendation.confidence);
+  const variantColors = {
+    variant_a: "border-l-emerald-400",
+    variant_b: "border-l-blue-400", 
+    variant_c: "border-l-purple-400"
   };
 
   return (
-    <div 
-      class="bg-zinc-900 border border-zinc-800 hover:border-emerald-400/50 transition-all duration-200 cursor-pointer group"
-      onClick={handleClick}
+    <div
+      class={`group relative bg-white/[0.02] border border-zinc-800/50 rounded-xl p-6 
+        transition-all duration-300 cursor-pointer overflow-hidden
+        hover:border-zinc-700/70 hover:bg-white/[0.03] hover:shadow-lg hover:shadow-black/20
+        ${recommendation.variant ? variantColors[recommendation.variant] + " border-l-2" : ""}
+        ${isHovered ? "transform hover:-translate-y-1" : ""}`}
+      onClick={() => onSelect(recommendation.productId)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Header with variant badge */}
-      <div class="p-4 border-b border-zinc-800">
-        <div class="flex items-start justify-between mb-2">
-          <div class="text-2xl">{recommendation.image}</div>
-          {getVariantBadge(recommendation.variant)}
+      {/* Header */}
+      <div class="flex items-start justify-between mb-4">
+        <div class="flex-1 min-w-0">
+          <h3 class="text-lg font-medium text-zinc-100 truncate group-hover:text-white transition-colors">
+            {recommendation.name}
+          </h3>
+          <p class="text-xl font-semibold text-emerald-400 mt-1">
+            {recommendation.price.toLocaleString()} kr
+          </p>
         </div>
         
-        <h3 class="font-semibold text-zinc-100 group-hover:text-emerald-400 transition-colors">
-          {recommendation.name}
-        </h3>
-        
-        <div class="text-lg font-light text-emerald-400 mt-1">
-          {recommendation.price.toLocaleString()} kr
-        </div>
+        {recommendation.variant && (
+          <div class="flex items-center gap-1 px-2 py-1 bg-zinc-800/50 rounded-md">
+            <div class={`w-1.5 h-1.5 rounded-full ${
+              recommendation.variant === 'variant_a' ? 'bg-emerald-400' :
+              recommendation.variant === 'variant_b' ? 'bg-blue-400' : 'bg-purple-400'
+            }`}></div>
+            <span class="text-xs font-mono text-zinc-400 uppercase">
+              {recommendation.variant.split('_')[1]}
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Advanced ML Confidence Section */}
-      <div class="p-4 border-b border-zinc-800">
-        <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-mono text-zinc-500 uppercase">AI Confidence</span>
-          <div class={`px-2 py-1 rounded text-xs font-mono border ${getConfidenceColor(recommendation.confidence)}`}>
-            {getConfidenceLevel(recommendation.confidence)}
+      {/* Confidence Display */}
+      <div class="mb-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm font-medium text-zinc-300">AI Confidence</span>
+          <div class={`px-2 py-1 rounded-full text-xs font-medium ${confidence.bg} ${confidence.color}`}>
+            {confidence.level}
           </div>
         </div>
         
-        {/* Confidence bar with gradient */}
-        <div class="w-full bg-zinc-800 h-2 rounded-full overflow-hidden mb-2">
+        {/* Confidence Bar */}
+        <div class="relative h-2 bg-zinc-800/50 rounded-full overflow-hidden">
           <div 
-            class="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-emerald-500 transition-all duration-500"
-            style={{ width: `${recommendation.confidence * 100}%` }}
+            class="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out"
+            style={{
+              width: `${recommendation.confidence * 100}%`,
+              background: `linear-gradient(90deg, 
+                ${recommendation.confidence >= 0.8 ? '#10b981' : 
+                  recommendation.confidence >= 0.6 ? '#f59e0b' : '#ef4444'} 0%, 
+                ${recommendation.confidence >= 0.8 ? '#34d399' : 
+                  recommendation.confidence >= 0.6 ? '#fbbf24' : '#f87171'} 100%)`
+            }}
           ></div>
         </div>
         
-        <div class="flex items-center justify-between text-xs">
-          <span class="font-mono text-zinc-400">
-            {(recommendation.confidence * 100).toFixed(1)}% certainty
-          </span>
-          <span class="font-mono text-zinc-500">
-            Score: {recommendation.recommendationScore.toFixed(3)}
-          </span>
+        <div class="flex justify-between text-xs text-zinc-500 mt-1">
+          <span>{(recommendation.confidence * 100).toFixed(1)}% certainty</span>
+          <span>Score: {recommendation.recommendationScore.toFixed(3)}</span>
         </div>
       </div>
 
-      {/* Algorithm Analysis */}
+      {/* Algorithm Breakdown */}
       {recommendation.scores && (
-        <div class="p-4 border-b border-zinc-800">
-          <div class="text-xs font-mono text-zinc-500 uppercase mb-3">Algorithm Breakdown</div>
-          
+        <div class="mb-4">
+          <div class="text-sm font-medium text-zinc-300 mb-3">Algorithm Analysis</div>
           <div class="space-y-2">
-            <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span>👥</span>
-                <span class="text-zinc-300">Collaborative</span>
+                <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                <span class="text-sm text-zinc-400">Collaborative</span>
               </div>
-              <div class="flex items-center gap-2">
-                <div class="w-16 bg-zinc-800 h-1 rounded-full overflow-hidden">
-                  <div 
-                    class="h-full bg-blue-400 transition-all duration-300"
-                    style={{ width: `${recommendation.scores.collaborative * 100}%` }}
-                  ></div>
-                </div>
-                <span class="font-mono text-blue-400 w-8 text-right">
-                  {(recommendation.scores.collaborative * 100).toFixed(0)}%
-                </span>
-              </div>
+              <span class="text-sm font-medium text-zinc-300">
+                {Math.round(recommendation.scores.collaborative * 100)}%
+              </span>
             </div>
             
-            <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span>🏷️</span>
-                <span class="text-zinc-300">Content</span>
+                <div class="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                <span class="text-sm text-zinc-400">Content</span>
               </div>
-              <div class="flex items-center gap-2">
-                <div class="w-16 bg-zinc-800 h-1 rounded-full overflow-hidden">
-                  <div 
-                    class="h-full bg-yellow-400 transition-all duration-300"
-                    style={{ width: `${recommendation.scores.content * 100}%` }}
-                  ></div>
-                </div>
-                <span class="font-mono text-yellow-400 w-8 text-right">
-                  {(recommendation.scores.content * 100).toFixed(0)}%
-                </span>
-              </div>
+              <span class="text-sm font-medium text-zinc-300">
+                {Math.round(recommendation.scores.content * 100)}%
+              </span>
             </div>
             
-            <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span>🧠</span>
-                <span class="text-zinc-300">Behavioral</span>
+                <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+                <span class="text-sm text-zinc-400">Behavioral</span>
               </div>
-              <div class="flex items-center gap-2">
-                <div class="w-16 bg-zinc-800 h-1 rounded-full overflow-hidden">
-                  <div 
-                    class="h-full bg-purple-400 transition-all duration-300"
-                    style={{ width: `${recommendation.scores.behavioral * 100}%` }}
-                  ></div>
-                </div>
-                <span class="font-mono text-purple-400 w-8 text-right">
-                  {(recommendation.scores.behavioral * 100).toFixed(0)}%
-                </span>
-              </div>
+              <span class="text-sm font-medium text-zinc-300">
+                {Math.round(recommendation.scores.behavioral * 100)}%
+              </span>
             </div>
           </div>
         </div>
       )}
 
-      {/* Algorithms used */}
-      <div class="p-4 border-b border-zinc-800">
-        <div class="text-xs font-mono text-zinc-500 uppercase mb-2">Active Algorithms</div>
-        <div class="flex flex-wrap gap-1">
-          {recommendation.algorithms.map(algorithm => (
-            <span 
-              key={algorithm}
-              class="inline-flex items-center gap-1 text-xs bg-zinc-800 text-zinc-300 px-2 py-1 rounded font-mono border border-zinc-700"
-            >
-              <span>{getAlgorithmIcon(algorithm)}</span>
-              {algorithm}
-            </span>
-          ))}
+      {/* Reasoning */}
+      <div class="border-t border-zinc-800/50 pt-4">
+        <div class="flex items-start gap-2">
+          <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 flex-shrink-0"></div>
+          <div>
+            <div class="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-1">
+              AI Reasoning
+            </div>
+            <p class="text-sm text-zinc-300 leading-relaxed">
+              {recommendation.reason}
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Recommendation reason */}
-      <div class="p-4">
-        <div class="text-xs font-mono text-zinc-500 uppercase mb-2">AI Reasoning</div>
-        <p class="text-sm text-zinc-300 leading-relaxed">
-          {recommendation.reason}
-        </p>
-        
-        {/* Trust indicators */}
-        <div class="flex items-center gap-4 mt-3 text-xs text-zinc-500">
-          <div class="flex items-center gap-1">
-            <span>🔒</span>
-            <span class="font-mono">Transparent</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <span>⚡</span>
-            <span class="font-mono">Real-time</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <span>🎯</span>
-            <span class="font-mono">Personalized</span>
-          </div>
-        </div>
+      {/* Active Algorithms Tags */}
+      <div class="flex flex-wrap gap-1.5 mt-4">
+        {recommendation.algorithms.map(algorithm => (
+          <span 
+            key={algorithm}
+            class="px-2 py-1 text-xs font-medium bg-zinc-800/40 text-zinc-400 rounded border border-zinc-700/50"
+          >
+            {algorithm.toUpperCase()}
+          </span>
+        ))}
+      </div>
+
+      {/* Hover Overlay */}
+      <div class={`absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-blue-500/5 
+        rounded-xl transition-opacity duration-300 pointer-events-none
+        ${isHovered ? "opacity-100" : "opacity-0"}`}>
       </div>
     </div>
   );

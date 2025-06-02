@@ -1,229 +1,244 @@
 import { useEffect, useState } from "preact/hooks";
 
-interface ABVariant {
-  id: string;
-  name: string;
-  weights: {
+interface TestResult {
+  testId: string;
+  variant: string;
+  description: string;
+  performanceScore: number;
+  conversionRate: number;
+  userCount: number;
+  confidenceLevel: number;
+  algorithms: {
     collaborative: number;
     content: number;
     behavioral: number;
   };
-  description: string;
-  testCount: number;
-  averageConfidence: number;
-  lastUsed: string | null;
+  status: string;
+  lastRun: string;
+  completedTests: number;
 }
 
-interface ABTestData {
-  variants: ABVariant[];
+interface AnalyticsData {
   totalTests: number;
-  recommendedVariant: ABVariant;
+  bestPerforming: TestResult;
+  results: TestResult[];
+  insights: string[];
 }
 
 export default function ABTestDashboard() {
-  const [testData, setTestData] = useState<ABTestData | null>(null);
+  const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [lastRefresh, setLastRefresh] = useState<string>("");
 
-  const fetchABTestResults = async () => {
+  const fetchData = async () => {
     try {
       const response = await fetch("http://localhost:8000/api/ab-test-results");
       const result = await response.json();
       
       if (result.success) {
-        setTestData(result.data);
-        setLastRefresh(new Date().toLocaleTimeString());
+        setData(result.data);
       }
     } catch (error) {
-      console.error("Error fetching A/B test results:", error);
+      console.error("Error fetching A/B test data:", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchABTestResults();
-    
-    // Refresh every 10 seconds
-    const interval = setInterval(fetchABTestResults, 10000);
-    
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, []);
 
-  const getVariantColor = (variantId: string) => {
-    switch (variantId) {
-      case "variant_a": return "emerald";
-      case "variant_b": return "blue";
-      case "variant_c": return "purple";
-      default: return "zinc";
+  const getVariantColor = (variant: string) => {
+    switch (variant) {
+      case "Collaborative Focus": return { 
+        primary: "text-emerald-400", 
+        bg: "bg-emerald-500/10", 
+        border: "border-emerald-500/20",
+        accent: "bg-emerald-400"
+      };
+      case "Content Focus": return { 
+        primary: "text-blue-400", 
+        bg: "bg-blue-500/10", 
+        border: "border-blue-500/20",
+        accent: "bg-blue-400"
+      };
+      case "Behavioral Focus": return { 
+        primary: "text-purple-400", 
+        bg: "bg-purple-500/10", 
+        border: "border-purple-500/20",
+        accent: "bg-purple-400"
+      };
+      default: return { 
+        primary: "text-zinc-400", 
+        bg: "bg-zinc-500/10", 
+        border: "border-zinc-500/20",
+        accent: "bg-zinc-400"
+      };
     }
   };
 
-  const getPerformanceLevel = (confidence: number) => {
-    if (confidence >= 0.8) return { level: "Excellent", color: "text-emerald-400" };
-    if (confidence >= 0.6) return { level: "Good", color: "text-yellow-400" };
-    if (confidence >= 0.4) return { level: "Fair", color: "text-orange-400" };
-    return { level: "Poor", color: "text-red-400" };
+  const getPerformanceLevel = (score: number) => {
+    if (score >= 0.85) return { level: "EXCELLENT", color: "text-emerald-400" };
+    if (score >= 0.75) return { level: "GOOD", color: "text-green-400" };
+    if (score >= 0.65) return { level: "MODERATE", color: "text-yellow-400" };
+    return { level: "POOR", color: "text-orange-400" };
   };
 
   if (loading) {
     return (
-      <div class="bg-zinc-900 border border-zinc-800 p-6">
-        <div class="animate-pulse">
-          <div class="h-4 bg-zinc-700 rounded mb-4"></div>
+      <div class="bg-white/[0.02] border border-zinc-800/50 rounded-xl p-6">
+        <div class="animate-pulse space-y-4">
+          <div class="h-6 bg-zinc-800/50 rounded"></div>
           <div class="space-y-3">
-            <div class="h-20 bg-zinc-800 rounded"></div>
-            <div class="h-20 bg-zinc-800 rounded"></div>
-            <div class="h-20 bg-zinc-800 rounded"></div>
+            {[1, 2, 3].map(i => (
+              <div key={i} class="h-16 bg-zinc-800/30 rounded-lg"></div>
+            ))}
           </div>
         </div>
       </div>
     );
   }
 
-  if (!testData) {
+  if (!data) {
     return (
-      <div class="bg-zinc-900 border border-zinc-800 p-6 text-center">
-        <p class="text-zinc-500 font-mono text-sm">Unable to load A/B test data</p>
+      <div class="bg-white/[0.02] border border-zinc-800/50 rounded-xl p-6">
+        <div class="text-center py-8">
+          <div class="text-zinc-400 text-sm">No A/B test data available</div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div class="bg-zinc-900 border border-zinc-800 p-6">
-      {/* Header */}
+    <div class="bg-white/[0.02] border border-zinc-800/50 rounded-xl p-6">
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h2 class="text-lg font-semibold text-zinc-100 mb-1">A/B Testing Dashboard</h2>
-          <p class="text-xs font-mono text-zinc-500 uppercase">Algorithm Performance Analysis</p>
+          <h2 class="text-lg font-semibold text-zinc-100">
+            A/B Testing
+          </h2>
+          <p class="text-sm text-zinc-400 mt-1">
+            {data.totalTests} Tests • Live Analysis
+          </p>
         </div>
         <div class="text-right">
-          <div class="text-sm font-mono text-emerald-400">{testData.totalTests} Tests</div>
-          <div class="text-xs text-zinc-500">Last refresh: {lastRefresh}</div>
+          <div class="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+            Last Updated
+          </div>
+          <div class="text-sm text-zinc-300">
+            {new Date().toLocaleTimeString()}
+          </div>
         </div>
       </div>
 
-      {/* Winner announcement */}
-      {testData.recommendedVariant && (
-        <div class="bg-gradient-to-r from-emerald-900/30 to-emerald-800/20 border border-emerald-400/30 p-4 rounded mb-6">
-          <div class="flex items-center gap-3">
-            <span class="text-2xl">🏆</span>
-            <div>
-              <h3 class="font-semibold text-emerald-400">
-                Best Performing: {testData.recommendedVariant.name}
-              </h3>
-              <p class="text-sm text-zinc-300">
-                {(testData.recommendedVariant.averageConfidence * 100).toFixed(1)}% average confidence
-              </p>
+      {/* Best Performing Variant */}
+      {data.bestPerforming && (
+        <div class="mb-6">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-2 h-2 bg-yellow-400 rounded-full"></div>
+            <span class="text-sm font-medium text-zinc-300">Best Performing</span>
+          </div>
+          
+          <div class={`p-4 rounded-lg border ${getVariantColor(data.bestPerforming.variant).border} ${getVariantColor(data.bestPerforming.variant).bg}`}>
+            <div class="flex items-center justify-between mb-2">
+              <span class={`font-medium ${getVariantColor(data.bestPerforming.variant).primary}`}>
+                {data.bestPerforming.variant}
+              </span>
+              <span class={`text-sm ${getPerformanceLevel(data.bestPerforming.performanceScore).color}`}>
+                {(data.bestPerforming.performanceScore * 100).toFixed(1)}% avg confidence
+              </span>
             </div>
+            <p class="text-sm text-zinc-400 leading-relaxed">
+              {data.bestPerforming.description}
+            </p>
           </div>
         </div>
       )}
 
-      {/* Variant performance cards */}
+      {/* Test Results */}
       <div class="space-y-4">
-        {testData.variants.map((variant, index) => {
-          const color = getVariantColor(variant.id);
-          const performance = getPerformanceLevel(variant.averageConfidence);
-          const isWinner = variant.id === testData.recommendedVariant?.id;
+        {data.results.map((result, index) => {
+          const variantStyle = getVariantColor(result.variant);
+          const performance = getPerformanceLevel(result.performanceScore);
           
           return (
-            <div 
-              key={variant.id}
-              class={`border p-4 transition-all duration-200 hover:border-${color}-400/50 ${
-                isWinner ? `bg-${color}-900/20 border-${color}-400/40` : 'bg-zinc-800 border-zinc-700'
-              }`}
-            >
-              <div class="flex items-start justify-between mb-3">
-                <div class="flex items-center gap-3">
-                  <div class={`w-3 h-3 rounded-full bg-${color}-400`}></div>
-                  <div>
-                    <h3 class="font-semibold text-zinc-100 flex items-center gap-2">
-                      {variant.name}
-                      {isWinner && <span class="text-xs bg-emerald-400 text-zinc-900 px-2 py-0.5 rounded font-mono">WINNER</span>}
-                    </h3>
-                    <p class="text-sm text-zinc-400">{variant.description}</p>
-                  </div>
+            <div key={result.testId} class={`p-4 rounded-lg border ${variantStyle.border} ${variantStyle.bg}`}>
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class={`w-3 h-3 ${variantStyle.accent} rounded-full`}></div>
+                  <span class={`font-medium ${variantStyle.primary}`}>
+                    {result.variant}
+                  </span>
+                  {result.variant === data.bestPerforming?.variant && (
+                    <div class="px-2 py-0.5 bg-yellow-400/20 text-yellow-400 text-xs font-medium rounded-full">
+                      WINNER
+                    </div>
+                  )}
                 </div>
-                
-                <div class="text-right">
-                  <div class={`text-lg font-semibold ${performance.color}`}>
-                    {(variant.averageConfidence * 100).toFixed(1)}%
+                <span class={`text-sm font-medium ${performance.color}`}>
+                  {performance.level}
+                </span>
+              </div>
+
+              <p class="text-sm text-zinc-400 mb-4 leading-relaxed">
+                {result.description}
+              </p>
+
+              {/* Algorithm Weights */}
+              <div class="mb-4">
+                <div class="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-2">
+                  Algorithm Weights
+                </div>
+                <div class="flex justify-between text-xs">
+                  <div class="text-center">
+                    <div class="text-blue-400 font-medium">
+                      {Math.round(result.algorithms.collaborative * 100)}%
+                    </div>
+                    <div class="text-zinc-500">Collaborative</div>
                   </div>
-                  <div class="text-xs text-zinc-500">{performance.level}</div>
+                  <div class="text-center">
+                    <div class="text-yellow-400 font-medium">
+                      {Math.round(result.algorithms.content * 100)}%
+                    </div>
+                    <div class="text-zinc-500">Content</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-purple-400 font-medium">
+                      {Math.round(result.algorithms.behavioral * 100)}%
+                    </div>
+                    <div class="text-zinc-500">Behavioral</div>
+                  </div>
                 </div>
               </div>
 
-              {/* Algorithm weights visualization */}
-              <div class="mb-3">
-                <div class="text-xs font-mono text-zinc-500 uppercase mb-2">Algorithm Weights</div>
-                <div class="grid grid-cols-3 gap-2">
-                  <div class="text-center">
-                    <div class="text-xs text-zinc-400 mb-1">Collaborative</div>
-                    <div class={`text-sm font-semibold text-${color}-400`}>
-                      {(variant.weights.collaborative * 100).toFixed(0)}%
-                    </div>
-                  </div>
-                  <div class="text-center">
-                    <div class="text-xs text-zinc-400 mb-1">Content</div>
-                    <div class={`text-sm font-semibold text-${color}-400`}>
-                      {(variant.weights.content * 100).toFixed(0)}%
-                    </div>
-                  </div>
-                  <div class="text-center">
-                    <div class="text-xs text-zinc-400 mb-1">Behavioral</div>
-                    <div class={`text-sm font-semibold text-${color}-400`}>
-                      {(variant.weights.behavioral * 100).toFixed(0)}%
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Test statistics */}
-              <div class="flex items-center justify-between text-xs font-mono text-zinc-500">
-                <span>{variant.testCount} tests completed</span>
-                {variant.lastUsed && (
-                  <span>Last used: {new Date(variant.lastUsed).toLocaleString()}</span>
-                )}
+              {/* Test Stats */}
+              <div class="flex justify-between text-xs text-zinc-500 pt-3 border-t border-zinc-800/50">
+                <span>{result.completedTests} tests completed</span>
+                <span>Last used: {result.lastRun}</span>
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Insights section */}
-      <div class="mt-6 pt-4 border-t border-zinc-800">
-        <h3 class="text-sm font-mono text-zinc-400 uppercase mb-3">Data-Driven Insights</h3>
-        <div class="space-y-2 text-sm text-zinc-300">
-          {testData.variants.length > 0 && (
-            <>
-              <div class="flex items-center gap-2">
-                <span class="text-emerald-400">📈</span>
-                <span>
-                  {testData.variants.find(v => v.averageConfidence === Math.max(...testData.variants.map(v => v.averageConfidence)))?.name} 
-                  {" "}shows highest recommendation confidence
-                </span>
+      {/* Data-Driven Insights */}
+      {data.insights && data.insights.length > 0 && (
+        <div class="mt-6 pt-6 border-t border-zinc-800/50">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+            <span class="text-sm font-medium text-zinc-300">Key Insights</span>
+          </div>
+          <div class="space-y-2">
+            {data.insights.map((insight, index) => (
+              <div key={index} class="flex items-start gap-2 text-sm text-zinc-400">
+                <div class="w-1 h-1 bg-zinc-600 rounded-full mt-2 flex-shrink-0"></div>
+                <span class="leading-relaxed">{insight}</span>
               </div>
-              
-              <div class="flex items-center gap-2">
-                <span class="text-blue-400">🔬</span>
-                <span>
-                  Total {testData.totalTests} algorithm tests provide statistical significance
-                </span>
-              </div>
-              
-              {testData.recommendedVariant && (
-                <div class="flex items-center gap-2">
-                  <span class="text-purple-400">💡</span>
-                  <span>
-                    Recommended: Focus on {testData.recommendedVariant.name.toLowerCase()} for optimal performance
-                  </span>
-                </div>
-              )}
-            </>
-          )}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 } 
