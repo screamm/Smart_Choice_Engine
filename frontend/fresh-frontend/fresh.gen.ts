@@ -8,6 +8,8 @@ import * as $api_joke from "./routes/api/joke.ts";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $index from "./routes/index.tsx";
 import * as $ABTestDashboard from "./islands/ABTestDashboard.tsx";
+import * as $App from "./islands/App.tsx";
+import * as $AppHeader from "./islands/AppHeader.tsx";
 import * as $Counter from "./islands/Counter.tsx";
 import * as $CustomerList from "./islands/CustomerList.tsx";
 import * as $LoadingOverlay from "./islands/LoadingOverlay.tsx";
@@ -25,6 +27,8 @@ const manifest = {
   },
   islands: {
     "./islands/ABTestDashboard.tsx": $ABTestDashboard,
+    "./islands/App.tsx": $App,
+    "./islands/AppHeader.tsx": $AppHeader,
     "./islands/Counter.tsx": $Counter,
     "./islands/CustomerList.tsx": $CustomerList,
     "./islands/LoadingOverlay.tsx": $LoadingOverlay,

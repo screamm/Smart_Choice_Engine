@@ -41,6 +41,7 @@ export default function MainApp({ showAdvancedMode }: Props) {
   const [loading, setLoading] = useState(false);
 
   console.log("🎮 MainApp island rendering");
+  console.log("📊 Layout mode:", showAdvancedMode ? "Advanced (3-col)" : "Simple (2-col)");
 
   const fetchRecommendations = async (customerId: number, variant?: string) => {
     console.log("📞 Fetching recommendations for customer:", customerId, variant ? `(variant: ${variant})` : "");
@@ -110,18 +111,23 @@ export default function MainApp({ showAdvancedMode }: Props) {
   }, []);
 
   return (
-    <div class="grid grid-cols-12 gap-8">
+    <div class={`grid gap-8 transition-all duration-300 ${showAdvancedMode ? 'grid-cols-12' : 'grid-cols-4'}`}>
       {/* Left Sidebar - Customer List & Real-time Monitor */}
-      <div class="col-span-3 space-y-8">
+      <div class={`space-y-8 transition-all duration-300 ${showAdvancedMode ? 'col-span-3' : 'col-span-1'}`}>
         <CustomerList 
           selectedCustomerId={selectedCustomer?.id}
         />
 
         {showAdvancedMode && <RealtimeUpdates />}
+        
+        {/* Debug info */}
+        <div class="text-xs text-zinc-600 font-mono p-2 bg-zinc-900/30 rounded">
+          Mode: {showAdvancedMode ? "Advanced" : "Simple"}
+        </div>
       </div>
 
       {/* Center - Recommendations */}
-      <div class="col-span-6">
+      <div class={`transition-all duration-300 ${showAdvancedMode ? 'col-span-6' : 'col-span-3'}`}>
         {selectedCustomer ? (
           <div class="space-y-6">
             {/* Customer Header */}
@@ -232,38 +238,43 @@ export default function MainApp({ showAdvancedMode }: Props) {
       </div>
 
       {/* Right Sidebar - A/B Testing Dashboard */}
-      <div class="col-span-3">
-        {showAdvancedMode ? (
-          <ABTestDashboard />
-        ) : (
-          <div class="bg-white/[0.02] border border-zinc-800/50 rounded-xl p-6">
-            <h3 class="text-lg font-semibold text-zinc-100 mb-4">
-              Analytics Preview
-            </h3>
-            <p class="text-zinc-400 mb-6 leading-relaxed">
-              Enable Advanced Mode to access enterprise features:
-            </p>
-            <div class="space-y-3">
-              <div class="flex items-center gap-3 text-sm text-zinc-500">
-                <div class="w-2 h-2 bg-emerald-400/50 rounded-full"></div>
-                <span>A/B Testing Dashboard</span>
-              </div>
-              <div class="flex items-center gap-3 text-sm text-zinc-500">
-                <div class="w-2 h-2 bg-blue-400/50 rounded-full"></div>
-                <span>Real-time System Monitor</span>
-              </div>
-              <div class="flex items-center gap-3 text-sm text-zinc-500">
-                <div class="w-2 h-2 bg-purple-400/50 rounded-full"></div>
-                <span>Advanced ML Confidence</span>
-              </div>
-              <div class="flex items-center gap-3 text-sm text-zinc-500">
-                <div class="w-2 h-2 bg-yellow-400/50 rounded-full"></div>
-                <span>Algorithm Transparency</span>
-              </div>
+      <div class={`transition-all duration-300 ${showAdvancedMode ? 'col-span-3 opacity-100' : 'col-span-0 opacity-0 w-0 overflow-hidden'}`}>
+        <ABTestDashboard />
+      </div>
+      
+      {/* Simple mode info panel - only shown when advanced mode is off */}
+      {/* {!showAdvancedMode && selectedCustomer && (
+        <div class="fixed bottom-6 right-6 bg-gradient-to-br from-emerald-600/90 to-blue-600/90 backdrop-blur border border-emerald-500/20 rounded-xl p-4 shadow-xl max-w-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+              <span class="text-lg">🚀</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-white">Advanced Features</h3>
+              <p class="text-xs text-emerald-100">Upptäck kraftfulla verktyg</p>
             </div>
           </div>
-        )}
-      </div>
+          
+          <div class="space-y-2 mb-4">
+            <div class="flex items-center gap-2 text-sm text-white/90">
+              <div class="w-1.5 h-1.5 bg-emerald-300 rounded-full"></div>
+              <span>Live A/B Testing</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-white/90">
+              <div class="w-1.5 h-1.5 bg-blue-300 rounded-full"></div>
+              <span>Real-time Analytics</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-white/90">
+              <div class="w-1.5 h-1.5 bg-purple-300 rounded-full"></div>
+              <span>Algorithm Insights</span>
+            </div>
+          </div>
+          
+          <div class="text-xs text-emerald-100 text-center">
+            Aktivera <span class="font-mono font-semibold">Advanced Mode</span> för att utforska
+          </div>
+        </div>
+      )} */}
     </div>
   );
 } 

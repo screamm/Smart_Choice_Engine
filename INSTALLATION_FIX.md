@@ -49,8 +49,27 @@ deno task start
 När både servrar är igång kommer du att kunna:
 - ✅ Se kundlistan
 - ✅ Klicka på kunder och se rekommendationer
-- ✅ A/B testing dashboard fungerar
-- ✅ Real-time updates fungerar
+- ✅ Växla mellan enkel vy och Advanced Mode
+- ✅ A/B testing dashboard (när Advanced Mode är aktivt)
+- ✅ Real-time updates (när Advanced Mode är aktivt)
+
+## Nya funktioner: Advanced Mode
+Appen startar nu i **enkel vy** för en renare upplevelse:
+
+### Enkel vy (Advanced Mode: AV)
+- 🎯 Fokuserad 2-kolumn layout
+- 📱 Kundlista till vänster
+- 🛍️ Rekommendationer i centrum (större yta)
+- 🚀 Elegant floating info-panel för Advanced features
+
+### Advanced vy (Advanced Mode: PÅ)
+- 📊 Fullständig 3-kolumn layout
+- 🧪 Live A/B Testing Dashboard
+- 📈 Real-time System Monitor
+- 🔍 Detaljerade algoritm-insights
+- 📡 WebSocket live-updates
+
+**Tips:** Använd Advanced Mode-togglen i headern för att växla mellan vyerna!
 
 ## Debugging tips
 Om det fortfarande inte fungerar efter Deno installation:
