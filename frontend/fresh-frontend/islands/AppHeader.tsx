@@ -22,7 +22,7 @@ export default function AppHeader({ onAdvancedModeChange }: Props) {
   };
 
   return (
-    <header class="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur">
+    <header class="hidden lg:block border-b border-zinc-800 bg-zinc-900/50 backdrop-blur">
       <div class="max-w-7xl mx-auto px-6 py-6">
         <div class="flex items-center justify-between">
           <div>

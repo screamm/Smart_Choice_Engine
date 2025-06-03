@@ -41,22 +41,22 @@ export default function RecommendationCard({ recommendation, onSelect }: Props) 
 
   return (
     <div
-      class={`group relative bg-white/[0.02] border border-zinc-800/50 rounded-xl p-6 
+      class={`group relative bg-white/[0.02] border border-zinc-800/50 rounded-xl p-4 md:p-6 
         transition-all duration-300 cursor-pointer overflow-hidden
         hover:border-zinc-700/70 hover:bg-white/[0.03] hover:shadow-lg hover:shadow-black/20
         ${recommendation.variant ? variantColors[recommendation.variant] + " border-l-2" : ""}
-        ${isHovered ? "transform hover:-translate-y-1" : ""}`}
+        ${isHovered ? "md:transform md:hover:-translate-y-1" : ""}`}
       onClick={() => onSelect(recommendation.productId)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Header */}
-      <div class="flex items-start justify-between mb-4">
+      <div class="flex items-start justify-between mb-3 md:mb-4">
         <div class="flex-1 min-w-0">
-          <h3 class="text-lg font-medium text-zinc-100 truncate group-hover:text-white transition-colors">
+          <h3 class="text-base md:text-lg font-medium text-zinc-100 truncate group-hover:text-white transition-colors">
             {recommendation.name}
           </h3>
-          <p class="text-xl font-semibold text-emerald-400 mt-1">
+          <p class="text-lg md:text-xl font-semibold text-emerald-400 mt-1">
             {recommendation.price.toLocaleString()} kr
           </p>
         </div>
@@ -75,11 +75,12 @@ export default function RecommendationCard({ recommendation, onSelect }: Props) 
       </div>
 
       {/* Confidence Display */}
-      <div class="mb-4">
+      <div class="mb-3 md:mb-4">
         <div class="flex items-center justify-between mb-2">
           <span class="text-sm font-medium text-zinc-300">AI Confidence</span>
           <div class={`px-2 py-1 rounded-full text-xs font-medium ${confidence.bg} ${confidence.color}`}>
-            {confidence.level}
+            <span class="hidden sm:inline">{confidence.level}</span>
+            <span class="sm:hidden">{(recommendation.confidence * 100).toFixed(0)}%</span>
           </div>
         </div>
         
@@ -99,14 +100,14 @@ export default function RecommendationCard({ recommendation, onSelect }: Props) 
         </div>
         
         <div class="flex justify-between text-xs text-zinc-500 mt-1">
-          <span>{(recommendation.confidence * 100).toFixed(1)}% certainty</span>
-          <span>Score: {recommendation.recommendationScore.toFixed(3)}</span>
+          <span>{(recommendation.confidence * 100).toFixed(1)}% säkerhet</span>
+          <span class="hidden sm:inline">Score: {recommendation.recommendationScore.toFixed(3)}</span>
         </div>
       </div>
 
-      {/* Algorithm Breakdown */}
+      {/* Algorithm Breakdown - Hidden on mobile, shown on desktop */}
       {recommendation.scores && (
-        <div class="mb-4">
+        <div class="hidden md:block mb-4">
           <div class="text-sm font-medium text-zinc-300 mb-3">Algorithm Analysis</div>
           <div class="space-y-2">
             <div class="flex items-center justify-between">
@@ -142,13 +143,29 @@ export default function RecommendationCard({ recommendation, onSelect }: Props) 
         </div>
       )}
 
+      {/* Mobile Algorithm Summary - Shown only on mobile */}
+      {recommendation.scores && (
+        <div class="md:hidden mb-3">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-zinc-400">Algoritmer:</span>
+            <div class="flex gap-1">
+              <span class="text-blue-400">{Math.round(recommendation.scores.collaborative * 100)}%</span>
+              <span class="text-zinc-600">•</span>
+              <span class="text-yellow-400">{Math.round(recommendation.scores.content * 100)}%</span>
+              <span class="text-zinc-600">•</span>
+              <span class="text-purple-400">{Math.round(recommendation.scores.behavioral * 100)}%</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Reasoning */}
-      <div class="border-t border-zinc-800/50 pt-4">
+      <div class="border-t border-zinc-800/50 pt-3 md:pt-4">
         <div class="flex items-start gap-2">
           <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 flex-shrink-0"></div>
           <div>
             <div class="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-1">
-              AI Reasoning
+              AI Motivering
             </div>
             <p class="text-sm text-zinc-300 leading-relaxed">
               {recommendation.reason}
@@ -157,16 +174,36 @@ export default function RecommendationCard({ recommendation, onSelect }: Props) 
         </div>
       </div>
 
-      {/* Active Algorithms Tags */}
-      <div class="flex flex-wrap gap-1.5 mt-4">
-        {recommendation.algorithms.map(algorithm => (
-          <span 
-            key={algorithm}
-            class="px-2 py-1 text-xs font-medium bg-zinc-800/40 text-zinc-400 rounded border border-zinc-700/50"
-          >
-            {algorithm.toUpperCase()}
-          </span>
-        ))}
+      {/* Active Algorithms Tags - Simplified for mobile */}
+      <div class="flex flex-wrap gap-1.5 mt-3 md:mt-4">
+        {/* Show first 2 on mobile, all on desktop */}
+        <div class="md:hidden flex flex-wrap gap-1.5">
+          {recommendation.algorithms.slice(0, 2).map(algorithm => (
+            <span 
+              key={algorithm}
+              class="px-2 py-1 text-xs font-medium bg-zinc-800/40 text-zinc-400 rounded border border-zinc-700/50"
+            >
+              {algorithm.toUpperCase()}
+            </span>
+          ))}
+          {recommendation.algorithms.length > 2 && (
+            <span class="px-2 py-1 text-xs font-medium bg-zinc-800/40 text-zinc-400 rounded border border-zinc-700/50">
+              +{recommendation.algorithms.length - 2}
+            </span>
+          )}
+        </div>
+        
+        {/* Show all on desktop */}
+        <div class="hidden md:flex flex-wrap gap-1.5">
+          {recommendation.algorithms.map(algorithm => (
+            <span 
+              key={algorithm}
+              class="px-2 py-1 text-xs font-medium bg-zinc-800/40 text-zinc-400 rounded border border-zinc-700/50"
+            >
+              {algorithm.toUpperCase()}
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* Hover Overlay */}

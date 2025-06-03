@@ -114,14 +114,14 @@ export default function CustomerList({ selectedCustomerId }: Props) {
   };
 
   return (
-    <div class="bg-white/[0.02] border border-zinc-800/50 rounded-xl p-6">
-      <div class="flex items-center justify-between mb-6">
+    <div class="bg-white/[0.02] border border-zinc-800/50 rounded-xl p-4 md:p-6">
+      <div class="flex items-center justify-between mb-4 md:mb-6">
         <div>
           <h2 class="text-lg font-semibold text-zinc-100">
-            Customers
+            Kunder
           </h2>
           <p class="text-sm text-zinc-400 mt-1">
-            {customers.length} available
+            {customers.length} tillgängliga
           </p>
         </div>
         <button 
@@ -129,20 +129,20 @@ export default function CustomerList({ selectedCustomerId }: Props) {
           class="px-3 py-2 text-sm bg-zinc-800/50 hover:bg-zinc-700/50 text-zinc-300 rounded-lg font-medium transition-colors disabled:opacity-50"
           disabled={loading}
         >
-          {loading ? "Loading..." : "Refresh"}
+          {loading ? "Laddar..." : "Uppdatera"}
         </button>
       </div>
       
       <div class="space-y-3">
         {error ? (
           <div class="p-4 border border-red-500/20 bg-red-500/10 rounded-lg text-center">
-            <div class="text-red-400 text-sm font-medium">Error loading customers</div>
+            <div class="text-red-400 text-sm font-medium">Fel vid laddning av kunder</div>
             <div class="text-red-500/80 text-xs mt-1">{error}</div>
           </div>
         ) : loading ? (
           <div class="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} class="p-4 border border-zinc-800/50 rounded-lg">
+              <div key={i} class="p-3 md:p-4 border border-zinc-800/50 rounded-lg">
                 <div class="animate-pulse">
                   <div class="h-4 bg-zinc-800/50 rounded mb-2"></div>
                   <div class="h-3 bg-zinc-800/30 rounded w-2/3"></div>
@@ -152,8 +152,8 @@ export default function CustomerList({ selectedCustomerId }: Props) {
           </div>
         ) : customers.length === 0 ? (
           <div class="p-4 border border-yellow-500/20 bg-yellow-500/10 rounded-lg text-center">
-            <div class="text-yellow-400 text-sm font-medium">No customers found</div>
-            <div class="text-yellow-500/80 text-xs mt-1">API returned empty data</div>
+            <div class="text-yellow-400 text-sm font-medium">Inga kunder hittades</div>
+            <div class="text-yellow-500/80 text-xs mt-1">API returnerade tom data</div>
           </div>
         ) : (
           customers.map(customer => {
@@ -164,7 +164,7 @@ export default function CustomerList({ selectedCustomerId }: Props) {
               <div
                 key={customer.id}
                 onClick={() => handleCustomerClick(customer)}
-                class={`group p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
+                class={`group p-3 md:p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
                   isSelected 
                     ? 'border-emerald-400/50 bg-emerald-400/5 shadow-lg shadow-emerald-500/10' 
                     : 'border-zinc-800/50 hover:border-zinc-700/70 hover:bg-white/[0.02]'
@@ -172,44 +172,44 @@ export default function CustomerList({ selectedCustomerId }: Props) {
               >
                 <div class="flex items-center justify-between mb-3">
                   <div class="flex items-center gap-3">
-                    <div class={`w-10 h-10 ${segmentStyle.bg} ${segmentStyle.border} border rounded-full flex items-center justify-center`}>
+                    <div class={`w-8 h-8 md:w-10 md:h-10 ${segmentStyle.bg} ${segmentStyle.border} border rounded-full flex items-center justify-center flex-shrink-0`}>
                       <div class={`w-2 h-2 ${segmentStyle.dot} rounded-full`}></div>
                     </div>
-                    <div>
-                      <h3 class="font-medium text-zinc-100 group-hover:text-white transition-colors">
+                    <div class="min-w-0 flex-1">
+                      <h3 class="font-medium text-zinc-100 group-hover:text-white transition-colors truncate">
                         {customer.name}
                       </h3>
-                      <p class="text-sm text-zinc-400">
+                      <p class="text-sm text-zinc-400 truncate">
                         {customer.location}
                       </p>
                     </div>
                   </div>
                   
-                  <div class={`px-2 py-1 ${segmentStyle.bg} ${segmentStyle.border} border rounded-md`}>
+                  <div class={`px-2 py-1 ${segmentStyle.bg} ${segmentStyle.border} border rounded-md flex-shrink-0`}>
                     <span class={`text-xs font-medium ${segmentStyle.text}`}>
                       {customer.segment.split(' ')[0]}
                     </span>
                   </div>
                 </div>
                 
-                <div class="grid grid-cols-3 gap-3 text-center">
+                <div class="grid grid-cols-3 gap-2 md:gap-3 text-center">
                   <div>
                     <div class="text-sm font-semibold text-zinc-300">
                       {customer.totalPurchases}
                     </div>
-                    <div class="text-xs text-zinc-500">Purchases</div>
+                    <div class="text-xs text-zinc-500">Köp</div>
                   </div>
                   <div>
                     <div class="text-sm font-semibold text-zinc-300">
                       {(customer.avgOrderValue / 1000).toFixed(1)}k
                     </div>
-                    <div class="text-xs text-zinc-500">Avg Order</div>
+                    <div class="text-xs text-zinc-500">Snitt</div>
                   </div>
                   <div>
                     <div class={`text-sm font-semibold ${getBehaviorColor(customer.behaviorScore)}`}>
                       {(customer.behaviorScore * 100).toFixed(0)}%
                     </div>
-                    <div class="text-xs text-zinc-500">Engagement</div>
+                    <div class="text-xs text-zinc-500">Engagemang</div>
                   </div>
                 </div>
 
@@ -217,7 +217,7 @@ export default function CustomerList({ selectedCustomerId }: Props) {
                   <div class="mt-3 pt-3 border-t border-emerald-400/20">
                     <div class="flex items-center gap-2 text-xs text-emerald-400">
                       <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
-                      <span>Selected for recommendations</span>
+                      <span>Vald för rekommendationer</span>
                     </div>
                   </div>
                 )}
