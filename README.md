@@ -28,6 +28,7 @@ A modern, intelligent recommendation engine built with **Fresh + Deno + TypeScri
 - **Backend**: Deno + Oak + TypeScript
 - **Hot Reload** - Instant development feedback
 - **Zero Runtime Dependencies** - Pure Deno stack
+- **Deno Deploy** - Simple production deployment
 
 ## 🚀 Quick Start
 
@@ -193,6 +194,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 - **Repository**: [https://github.com/screamm/Smart_Choice_Engine](https://github.com/screamm/Smart_Choice_Engine)
 - **Fresh Framework**: [https://fresh.deno.dev](https://fresh.deno.dev)
 - **Deno Runtime**: [https://deno.land](https://deno.land)
+- **Deno Deploy**: [https://deno.com/deploy](https://deno.com/deploy)
 
 ---
 
